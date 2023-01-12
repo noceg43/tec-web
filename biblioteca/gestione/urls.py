@@ -19,5 +19,7 @@ from .views import *
 app_name = "gestione"
 
 urlpatterns = [
-    path("listalibri/",lista_libri,name="listalibri")
+    path("listalibri/", lista_libri, name="listalibri"),
+    path("listamattoni/", mattoni, name="mattoni"),
+    path("qualeautore/", quale_autore, name="quale_autore")
 ]
