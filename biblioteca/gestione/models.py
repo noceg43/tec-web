@@ -1,11 +1,12 @@
-from unittest.util import _MAX_LENGTH
 from django.db import models
+
+# Create your models here.
 
 
 class Libro(models.Model):
     titolo = models.CharField(max_length=200)
     autore = models.CharField(max_length=50)
-    pagine = models.CharField(max_length=100)
+    pagine = models.IntegerField(default=100)
     data_prestito = models.DateField(default=None)
 
     def __str__(self):
