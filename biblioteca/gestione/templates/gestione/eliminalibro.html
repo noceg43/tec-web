@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+
+{% block head %}{% endblock head %}
+
+{% block title%}{{title}}{% endblock %}
+
+{% block content%}
+
+    <center>
+    <h1>Sicuro di eliminare {{libro}} ?</h1>
+
+    {% if message == "" %}
+
+    <a href='/gestione/eliminalibro/{{libro.titolo}}/{{libro.autore}}?conferma=1'>Conferma l'eliminazione</a>
+    <br>
+    <a href="{% url 'gestione:listalibri' %}">No</a>
+
+
+
+    {% else%}
+
+    <p> {{message}} </p>
+    <a href="{% url 'gestione:listalibri' %}">Lista libri</a>
+
+    {% endif %}
+
+    </center>
+
+{% endblock %}

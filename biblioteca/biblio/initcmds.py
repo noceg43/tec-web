@@ -11,6 +11,7 @@ def erase_db():
 def init_db():
 
     if len(Libro.objects.all()) != 0:
+        print("DB non vuoto")
         return
 
     def func_time(off_year=0, off_month=0, off_day=0):

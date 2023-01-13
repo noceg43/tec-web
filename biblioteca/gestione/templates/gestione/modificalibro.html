@@ -11,7 +11,7 @@
 
     {% if message == "" %}
 
-    <form action = "/gestione/crealibro">
+    <form action = "/gestione/modificalibro/{{libro.titolo}}/{{libro.autore}}">
         <label for="autore">Autore:</label><br>
         <input type="text" id="autore" name="autore" value={{libro.autore}}><br>
         <label for="titolo">Titolo:</label><br>

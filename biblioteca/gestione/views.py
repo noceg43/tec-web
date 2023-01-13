@@ -82,9 +82,27 @@ def modifica_libro(request, titolo="", autore=""):
         libro_da_modificare.pagine = pag
 
         try:
+            print(str(libro_da_modificare.id))
             libro_da_modificare.save()
             message = "Modifica libro riuscita !" + message
         except Exception as e:
             message = "Errore nella modifica del libro" + str(e)
 
     return render(request, template_name="gestione/modificalibro.html", context={"title": "Modifica Libro", "message": message, "libro": libro_da_modificare})
+
+
+def elimina_libro(request, titolo="", autore=""):
+    message = ""
+
+    libro_da_eliminare = get_object_or_404(
+        Libro, autore=autore, titolo=titolo)
+
+    if "conferma" in request.GET:
+
+        try:
+            libro_da_eliminare.delete()
+            message = "Eliminazione libro riuscita !" + message
+        except Exception as e:
+            message = "Errore nell'eliminazione del libro" + str(e)
+
+    return render(request, template_name="gestione/eliminalibro.html", context={"title": "Modifica Libro", "message": message, "libro": libro_da_eliminare})
