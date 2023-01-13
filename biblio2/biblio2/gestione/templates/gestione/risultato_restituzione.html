@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block head %} {% endblock %}
+
+
+{% block content %}
+
+    <center>
+    {% if message == 0 %}
+        <h1>Copia restituita con successo </h1>
+    {% else %}
+        <h1>Copia restituita in ritardo :\</h1>
+    {% endif %}
+
+    </center>
+
+{% endblock %}

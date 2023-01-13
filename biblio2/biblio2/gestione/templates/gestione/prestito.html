@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+
+{% block head %}{% endblock head %}
+
+{% block title%}{{title}}{% endblock %}
+
+{% block content%}
+
+    <center>
+    <h1>{{libro}}</h1>
+
+    {% if message == "Non ci sono copie disponibili" %}
+        <h2> "Non ci sono copie disponibili"</h2>
+    {% endif%}
+
+    <p> {{message}} </p>
+    <a href="{% url 'gestione:listalibri' %}">Lista libri</a>
+
+
+    </center>
+
+{% endblock %}

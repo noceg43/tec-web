@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block head %} {% endblock %}
+
+{% block title %}{{title}}{% endblock %}
+
+{% block content %}
+
+    <center>
+    <h1>{{title}}</h1>
+    <h2>{{libro}}</h2>
+
+    {% if listacopie.count > 0 %}
+        <p> Ci sono {{listacopie.count}} copie in questa biblioteca! </p>
+        <ul>
+        {% for c in listacopie %}
+
+            <li> {{ c.pk }} </li>
+            <a href='/gestione/restituzione/{{c.pk}}'>Restituisci</a>
+
+        {% endfor %}
+        </ul>
+    {% else %}
+        <p>Non ci sono copie disponibili!</p>
+    {% endif %}
+
+    </center>
+
+{% endblock %}
