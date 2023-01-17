@@ -38,8 +38,8 @@ def search(request):
     else:
         form = SearchForm()
 
-    return render(request, template_name="gestione/ricerca.html", context={"form": form})
-    # return render(request,template_name="gestione/ricerca_ajax.html",context={"form":form})
+    # return render(request, template_name="gestione/ricerca.html", context={"form": form})
+    return render(request, template_name="gestione/ricerca_ajax.html", context={"form": form})
 
 
 class LibroRicercaView(LibroListView):
