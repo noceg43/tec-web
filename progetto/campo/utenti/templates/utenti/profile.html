@@ -1,0 +1,9 @@
+<h2>Profilo utente</h2>
+<p>Nome: {{ user}} </p>
+<p>Gruppi:
+    <ul>
+        {% for group in user.groups.all %}
+            <li>{{ group.name }}</li>
+        {% endfor %}
+    </ul>
+</p>
