@@ -16,13 +16,16 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import include, path
 
+from campo.views import home
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path("amministrazione/", include("amministratore.urls")),
     path("bacheca/", include("bacheca.urls")),
     path("messaggi/", include("messaggi.urls")),
     path("prenotazioni/", include("prenotazioni.urls")),
-    path("utenti/", include("utenti.urls")),
+    path("accounts/", include("utenti.urls")),
+    path('home/', home, name='home'),
 
 
 ]
