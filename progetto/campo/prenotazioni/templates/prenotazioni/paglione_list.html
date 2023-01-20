@@ -1,0 +1,8 @@
+{% block content %}
+    <h1>Lista di Paglioni</h1>
+    <ul>
+    {% for paglione in paglioni %}
+        <li>{{ paglione }}</li>
+    {% endfor %}
+    </ul>
+{% endblock %}
