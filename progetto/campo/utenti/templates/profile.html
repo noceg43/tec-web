@@ -1,5 +1,5 @@
 <h2>Profilo utente</h2>
-<p>Nome: {{ user}} </p>
+<p>Nome: {{ user }} </p>
 <p>Gruppi:
     <ul>
         {% for group in user.groups.all %}
@@ -7,4 +7,15 @@
         {% endfor %}
     </ul>
 </p>
-
+{% block content %}
+    <h1>I tuoi Paglioni prenotati</h1>
+    {% if paglioni %}
+        <ul>
+            {% for paglione in paglioni %}
+                <li>{{ paglione }}</li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>Nessun paglione prenotato.</p>
+    {% endif %}
+{% endblock %}

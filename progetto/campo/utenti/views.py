@@ -1,5 +1,7 @@
 from django.shortcuts import render
 from django.urls import reverse_lazy
+
+from prenotazioni.models import Prenotazione
 from .forms import *
 from django.views.generic.edit import CreateView
 from django.contrib.auth.views import FormView
@@ -20,7 +22,10 @@ class UserCreateView(CreateView):
 class ProfileView(LoginRequiredMixin, TemplateView):
     template_name = 'profile.html'
 
+    # override del metodo
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['user'] = self.request.user
+        prenotazioni = Prenotazione.objects.filter(utente=self.request.user)
+        context['paglioni'] = [
+            prenotazione.paglione for prenotazione in prenotazioni]
         return context
