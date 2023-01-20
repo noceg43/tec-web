@@ -27,5 +27,5 @@ class ProfileView(LoginRequiredMixin, TemplateView):
         context = super().get_context_data(**kwargs)
         prenotazioni = Prenotazione.objects.filter(utente=self.request.user)
         context['paglioni'] = [
-            prenotazione.paglione for prenotazione in prenotazioni]
+            prenotazione for prenotazione in prenotazioni]
         return context

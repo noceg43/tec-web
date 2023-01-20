@@ -7,9 +7,6 @@ from django.contrib.auth.models import User
 class Paglione(models.Model):
     attivo = models.BooleanField(default=True)
 
-    def disponibile(self):
-        return self.attivo
-
     def __str__(self):
         return "Paglione n." + str(self.id) + " " + ("non" if not self.attivo else "") + " disponibile"
 
@@ -19,7 +16,7 @@ class Paglione(models.Model):
 
 class Prenotazione(models.Model):
     priorità = models.DateTimeField()
-    ora_prenotata = models.DateTimeField(primary_key=True)
+    ora_prenotata = models.DateTimeField()
     paglione = models.ForeignKey(
         Paglione, on_delete=models.CASCADE, related_name='prenotazioni')
     utente = models.ForeignKey(User, on_delete=models.PROTECT, blank=True,
