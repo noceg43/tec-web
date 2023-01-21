@@ -16,7 +16,7 @@ class PrenotazioneForm(forms.ModelForm):
         super(PrenotazioneForm, self).__init__(*args, **kwargs)
         now = dt.now()
         # lista di tutti gli orari possibili
-        lista = [(now.replace(hour=i, minute=0, second=0, microsecond=0) + timedelta(days=1), (now.replace(hour=i,
+        lista = [(now.replace(hour=i, minute=0, second=0, microsecond=0) + timedelta(days=7), (now.replace(hour=i,
                   minute=0, second=0, microsecond=0) + timedelta(days=1)).strftime("%H:%M %d/%m/%Y")) for i in range(8, 22)]
         # verrano visualizzati solo gli orari in cui non è impegnato
         self.fields['ora_prenotata'].choices = [x for x in lista if x[0] not in [y.replace(tzinfo=None)

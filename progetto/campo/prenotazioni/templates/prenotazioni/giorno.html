@@ -1,0 +1,6 @@
+<h1>Scegli l'ora per il giorno {{ day }}</h1>
+<ul>
+    {% for hour in lista_ore %}
+    <li>{{ hour|date:"H:i" }}</li>
+    {% endfor %}
+</ul>
