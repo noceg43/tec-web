@@ -17,7 +17,9 @@ class PaglioneListView(ListView):
 
 @login_required
 def PrenotazioneView(request, day):
-
+    '''
+    da cancellare sostituita dalle view sotto
+    '''
     oggi = datetime.now().date()
     prossimi_7_giorni = [oggi + timedelta(days=i) for i in range(1, 8)]
     # controllo se data formattata correttamente
@@ -51,6 +53,9 @@ def PrenotazioneView(request, day):
 
 @login_required
 def Prossimi7GiorniView(request):
+    '''
+    Semplice lista di link agli orari disponibili dei prossimi 7 giorni 
+    '''
     today = datetime.now().date()
     prossimi_7_giorni = [today + timedelta(days=i) for i in range(1, 8)]
     return render(request, 'prenotazioni/prossimi_7_giorni.html', {'prossimi_7_giorni': prossimi_7_giorni})
@@ -58,7 +63,12 @@ def Prossimi7GiorniView(request):
 
 @login_required
 def GiornoView(request, day):
-
+    '''
+    Selezione dell'ora per la quale si vuole prenotare
+    controlli su: 
+        -   vietare accesso alla pagina di giorni > 7imo
+        -   mostrare all'utente solo ore dove lui non è già occupato
+    '''
     oggi = datetime.now().date()
     prossimi_7_giorni = [oggi + timedelta(days=i) for i in range(1, 8)]
     # controllo se data formattata correttamente
@@ -83,3 +93,52 @@ def GiornoView(request, day):
         x for x in lista_ore if x not in lista_ore_prenotate]
 
     return render(request, 'prenotazioni/giorno.html', {'lista_ore': lista_ore_prenotabili, 'day': selected_day})
+
+
+@login_required
+def PrenotaView(request, hour):
+    '''
+    Lista di tutti i paglioni disponibili, per ogni paglione presente il pulsante "prenota" 
+    e la lista ordinata degli altri utenti in coda che lo hanno prenotato.
+    Controlli su:
+        -   vietare all'utente di prenotare più campi alla stessa ora
+    '''
+    # ottengo l'ora in formato datetime
+    selected_hour = datetime.strptime(hour, '%Y-%m-%d %H:%M:%S')
+
+    # ottengo le prenotazioni dell'utente e gli vieto di prenotare più campi per la stessa ora
+    prenotazioni = Prenotazione.objects.filter(utente=request.user)
+    if selected_hour in [p.ora_prenotata.replace(tzinfo=None) for p in prenotazioni]:
+        return redirect('profile')
+
+    # creo un dizionario che avrà i paglioni attivi e la lista di utenti prenotati in ordine di priorità
+    paglioni_attivi = Paglione.objects.filter(attivo=True)
+    prenotazioni_paglione = {}
+    for paglione in paglioni_attivi:
+        prenotazioni = Prenotazione.objects.filter(
+            ora_prenotata=selected_hour, paglione=paglione).order_by('priorità')
+        prenotazioni_paglione[paglione] = prenotazioni
+    return render(request, 'prenotazioni/prenota_ora.html', {'prenotazioni_paglione': prenotazioni_paglione, 'hour': selected_hour})
+
+
+@login_required
+def CreaView(request, paglione_id, hour):
+    '''
+    View di creazione della prenotazione 
+    Controlli su:
+        -   vietare all'utente di prenotare più campi alla stessa ora
+    '''
+    # ora in formato datetime
+    selected_hour = datetime.strptime(hour, '%Y-%m-%d %H:%M:%S')
+
+    # ottengo le prenotazioni dell'utente e gli vieto di prenotare più campi per la stessa ora
+    prenotazioni = Prenotazione.objects.filter(utente=request.user)
+    if selected_hour in [p.ora_prenotata.replace(tzinfo=None) for p in prenotazioni]:
+        return redirect('profile')
+
+    # dall'id del paglione, l'ora e l'utente registrato creo la prenotazione
+    paglione = Paglione.objects.get(id=paglione_id)
+    prenotazione = Prenotazione(ora_prenotata=selected_hour,
+                                paglione=paglione, utente=request.user, priorità=datetime.now())
+    prenotazione.save()
+    return redirect('profile')

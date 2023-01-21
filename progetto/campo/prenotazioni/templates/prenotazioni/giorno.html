@@ -1,6 +1,6 @@
 <h1>Scegli l'ora per il giorno {{ day }}</h1>
 <ul>
     {% for hour in lista_ore %}
-    <li>{{ hour|date:"H:i" }}</li>
+    <li><a href="{% url 'prenota' hour|date:'Y-m-d H:i:s' %}">{{ hour|date:"H:i" }}</a></li>
     {% endfor %}
 </ul>

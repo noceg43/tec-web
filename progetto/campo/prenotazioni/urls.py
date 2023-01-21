@@ -9,7 +9,8 @@ urlpatterns = [
     path('prenota/<str:day>/', PrenotazioneView, name='crea_prenotazione'),
     path('giorni/', Prossimi7GiorniView, name='prossimi_7_giorni'),
     path('giorno/<str:day>/orari/', GiornoView, name='giorno'),
-
+    path('ora/<str:hour>/campi/', PrenotaView, name='prenota'),
+    path('crea/<int:paglione_id>/<str:hour>', CreaView, name='crea'),
 ]
 # erase()
 init()
