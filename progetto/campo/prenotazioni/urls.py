@@ -11,8 +11,10 @@ urlpatterns = [
     path('giorno/<str:day>/orari/', GiornoView, name='giorno'),
     path('ora/<str:hour>/campi/', PrenotaView, name='prenota'),
     path('crea/<int:paglione_id>/<str:hour>', CreaView, name='crea'),
+    path('cancella/<int:id_prenotazione>/',
+         CancellaPrenotazione, name='cancella_prenotazione'),
 ]
 # erase()
 init()
 
-#cancella_prenotazioni_scadute_start()
+# cancella_prenotazioni_scadute_start()

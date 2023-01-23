@@ -4,14 +4,16 @@
     {% if prenotazioni %}
         <ol>
             {% for prenotazione in prenotazioni %}
-                <li>{{ prenotazione.utente }} - Prenotato alle: {{ prenotazione.priorità }}</li>
+                <li>{{ prenotazione.utente }} - Prenotato alle: {{ prenotazione.priorità }}     tipo: {{ prenotazione.utente.groups.all.first }}</li>
             {% endfor %}
         </ol>
         {% else %}
             <p>Campo libero</p>
         {% endif %}
-    <form action="{% url 'crea' paglione.id hour|date:'Y-m-d H:i:s' %}" method="post">
-        {% csrf_token %}
-        <input type="submit" value="Prenota">
-    </form>    
+    {% if user.is_authenticated %}
+        <form action="{% url 'crea' paglione.id hour|date:'Y-m-d H:i:s' %}" method="post">
+            {% csrf_token %}
+            <input type="submit" value="Prenota">
+        </form>
+    {% endif %}
     {% endfor %}

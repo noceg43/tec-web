@@ -22,6 +22,9 @@ class Prenotazione(models.Model):
     utente = models.ForeignKey(User, on_delete=models.PROTECT, blank=True,
                                null=True, default=None, related_name="prenotazioni")
 
+    def primo_priorità(self):
+        return Prenotazione.objects.filter(ora_prenotata=self.ora_prenotata).order_by('priorità').first() == self
+
     def __str__(self):
         return "Prenotazione del Paglione n." + str(self.paglione.id) + " effettuata da: " + str(self.utente) + " alle: " + str(self.priorità) + " per le ore: " + str(self.ora_prenotata)
 

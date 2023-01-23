@@ -51,7 +51,6 @@ def PrenotazioneView(request, day):
     return render(request, 'prenotazioni/crea_prenotazione.html', {'form': form, 'day': selected_day})
 
 
-@login_required
 def Prossimi7GiorniView(request):
     '''
     Semplice lista di link agli orari disponibili dei prossimi 7 giorni 
@@ -61,13 +60,14 @@ def Prossimi7GiorniView(request):
     return render(request, 'prenotazioni/prossimi_7_giorni.html', {'prossimi_7_giorni': prossimi_7_giorni})
 
 
-@login_required
 def GiornoView(request, day):
     '''
     Selezione dell'ora per la quale si vuole prenotare
     controlli su: 
         -   vietare accesso alla pagina di giorni > 7imo
         -   mostrare all'utente solo ore dove lui non è già occupato
+        -   vista per utente non registrato
+        -   restituire lista di ore in base al tipo di utente che le richiede
     '''
     oggi = datetime.now().date()
     prossimi_7_giorni = [oggi + timedelta(days=i) for i in range(1, 8)]
@@ -83,33 +83,54 @@ def GiornoView(request, day):
     start_time = datetime.combine(selected_day, datetime.min.time())
     lista_ore = [start_time + timedelta(hours=x) for x in range(8, 23)]
 
+    # se l'utente non è autenticato mostrare tutto
+    if not request.user.is_authenticated:
+        return render(request, 'prenotazioni/giorno.html', {'lista_ore': lista_ore, 'day': selected_day})
+
     # ottengo la lista delle ore in cui l'utente occuperà il campo
     prenotazioni = Prenotazione.objects.filter(utente=request.user)
-    lista_ore_prenotate = [
+    lista_ore_prenotate_utente = [
         prenotazione.ora_prenotata.replace(tzinfo=None) for prenotazione in prenotazioni]
 
-    # tolgo al range 8-22 le ore in cui l'utente sta già occupando il campo
-    lista_ore_prenotabili = [
-        x for x in lista_ore if x not in lista_ore_prenotate]
+    if "Allievi" in [group.name for group in request.user.groups.all()]:
+        # ottengo la lista delle ore in cui un utente maestro ha prenotato un paglione
+        prenotazioni_maestri = Prenotazione.objects.filter(
+            utente__groups__name='Maestri')
+        # lista ore dove i maestri sono i primi in lista
+        prenotazioni_maestri_primi = [
+            p for p in prenotazioni_maestri if p.primo_priorità()]
+        lista_ore_prenotate_maestri = [
+            prenotazione.ora_prenotata.replace(tzinfo=None) for prenotazione in prenotazioni_maestri_primi]
+        lista_ore_prenotate_maestri = list(
+            set(lista_ore_prenotate_maestri))  # elimino eventuali doppioni
+
+        # tolgo al range 8-22 le ore in cui l'utente sta già occupando il campo e le ore in cui un utente maestro ha prenotato un paglione
+        lista_ore_prenotabili = [
+            x for x in lista_ore if x not in lista_ore_prenotate_utente and x in lista_ore_prenotate_maestri]
+    else:
+        # tolgo al range 8-22 le ore in cui l'utente sta già occupando il campo
+        lista_ore_prenotabili = [
+            x for x in lista_ore if x not in lista_ore_prenotate_utente]
 
     return render(request, 'prenotazioni/giorno.html', {'lista_ore': lista_ore_prenotabili, 'day': selected_day})
 
 
-@login_required
 def PrenotaView(request, hour):
     '''
     Lista di tutti i paglioni disponibili, per ogni paglione presente il pulsante "prenota" 
     e la lista ordinata degli altri utenti in coda che lo hanno prenotato.
     Controlli su:
         -   vietare all'utente di prenotare più campi alla stessa ora
+        -   vista per utente non registrato
     '''
     # ottengo l'ora in formato datetime
     selected_hour = datetime.strptime(hour, '%Y-%m-%d %H:%M:%S')
 
-    # ottengo le prenotazioni dell'utente e gli vieto di prenotare più campi per la stessa ora
-    prenotazioni = Prenotazione.objects.filter(utente=request.user)
-    if selected_hour in [p.ora_prenotata.replace(tzinfo=None) for p in prenotazioni]:
-        return redirect('profile')
+    if request.user.is_authenticated:
+        # ottengo le prenotazioni dell'utente e gli vieto di prenotare più campi per la stessa ora
+        prenotazioni = Prenotazione.objects.filter(utente=request.user)
+        if selected_hour in [p.ora_prenotata.replace(tzinfo=None) for p in prenotazioni]:
+            return redirect('profile')
 
     # creo un dizionario che avrà i paglioni attivi e la lista di utenti prenotati in ordine di priorità
     paglioni_attivi = Paglione.objects.filter(attivo=True)
@@ -126,7 +147,7 @@ def CreaView(request, paglione_id, hour):
     '''
     View di creazione della prenotazione 
     Controlli su:
-        -   vietare all'utente di prenotare più campi alla stessa ora
+        -   vietare all'utente di prenotare più campi alla stessa ora        
     '''
     # ora in formato datetime
     selected_hour = datetime.strptime(hour, '%Y-%m-%d %H:%M:%S')
@@ -142,3 +163,21 @@ def CreaView(request, paglione_id, hour):
                                 paglione=paglione, utente=request.user, priorità=datetime.now())
     prenotazione.save()
     return redirect('profile')
+
+
+@login_required
+def CancellaPrenotazione(request, id_prenotazione):
+    '''
+    View di cancellazione della prenotazione
+    Controlli su:
+        -   se la prenotazione da cancellare appartiene all'utente che ha creato la view
+    '''
+    prenotazione = Prenotazione.objects.get(id=id_prenotazione)
+    if request.user == prenotazione.utente:
+        prenotazione.delete()
+    return redirect('profile')
+
+    #                                   [DA IMPLEMENTARE]
+    ##############################################################################################
+    # se maestro cancella prenotazione allora cancellare prenotazioni di allievi con la stessa ora
+    ##############################################################################################

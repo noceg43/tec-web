@@ -9,10 +9,24 @@
 </p>
 {% block content %}
     <h1>I tuoi Paglioni prenotati</h1>
-    {% if paglioni %}
+    {% if prenotazioni %}
         <ul>
-            {% for paglione in paglioni %}
-                <li>{{ paglione }}</li>
+            {% for prenotazione,primo in prenotazioni.items %}
+                {% if primo %}
+                    <li> <b> Per le: {{ prenotazione.ora_prenotata }}    al Paglione n.{{ prenotazione.paglione.id }} </b> 
+                        <form action="{% url 'cancella_prenotazione' prenotazione.id %}" method="post">
+                            {% csrf_token %}
+                            <input type="submit" value="Cancella Prenotazione">
+                        </form>
+                    </li>
+                {% else %}
+                    <li>Per le: {{ prenotazione.ora_prenotata }}    al Paglione n.{{ prenotazione.paglione.id }}
+                        <form action="{% url 'cancella_prenotazione' prenotazione.id %}" method="post">
+                            {% csrf_token %}
+                            <input type="submit" value="Cancella Prenotazione">
+                        </form>                        
+                    </li>
+                {% endif %}
             {% endfor %}
         </ul>
     {% else %}
