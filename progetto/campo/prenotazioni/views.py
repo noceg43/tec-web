@@ -5,6 +5,7 @@ from prenotazioni.forms import PrenotazioneForm
 from .models import Paglione, Prenotazione
 from django.contrib.auth.decorators import login_required
 from datetime import datetime, timedelta
+from django.contrib.auth.models import Group
 
 # Create your views here.
 
@@ -171,13 +172,14 @@ def CancellaPrenotazione(request, id_prenotazione):
     View di cancellazione della prenotazione
     Controlli su:
         -   se la prenotazione da cancellare appartiene all'utente che ha creato la view
+        -   cancellare prenotazioni degli allievi se cancellata quella del maestro
     '''
-    prenotazione = Prenotazione.objects.get(id=id_prenotazione)
-    if request.user == prenotazione.utente:
-        prenotazione.delete()
+    prenotazioni = Prenotazione.objects.get(id=id_prenotazione)
+    if request.user == prenotazioni.utente:
+        if request.user.groups.filter(name='Maestri').exists():
+            prenotazioni_allievi = Prenotazione.objects.filter(
+                ora_prenotata=prenotazioni.ora_prenotata, utente__groups=Group.objects.get(name='Allievi'))
+            prenotazioni_allievi.delete()
+        prenotazioni.delete()
     return redirect('profile')
-
-    #                                   [DA IMPLEMENTARE]
-    ##############################################################################################
-    # se maestro cancella prenotazione allora cancellare prenotazioni di allievi con la stessa ora
-    ##############################################################################################
+# se si era primi in priorità e c'è almeno un utente dopo,
