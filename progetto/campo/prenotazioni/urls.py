@@ -14,3 +14,5 @@ urlpatterns = [
 ]
 # erase()
 init()
+
+#cancella_prenotazioni_scadute_start()
