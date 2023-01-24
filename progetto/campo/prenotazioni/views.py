@@ -93,7 +93,27 @@ def GiornoView(request, day):
     lista_ore_prenotate_utente = [
         prenotazione.ora_prenotata.replace(tzinfo=None) for prenotazione in prenotazioni]
 
+    # controllo se l'utente fa parte del gruppo "Allievi"
     if "Allievi" in [group.name for group in request.user.groups.all()]:
+        lista_ore_prenotabili = _lista_ore_prenotabili(
+            lista_ore, lista_ore_prenotate_utente, True)
+    else:
+        lista_ore_prenotabili = _lista_ore_prenotabili(
+            lista_ore, lista_ore_prenotate_utente, False)
+
+    return render(request, 'prenotazioni/giorno.html', {'lista_ore': lista_ore_prenotabili, 'day': selected_day})
+
+
+def _lista_ore_prenotabili(lista_ore, lista_ore_prenotate_utente, flag_allievo=False):
+    '''
+        Funzione che dato in input:
+            -   lista_ore = lista delle ore del giorno selezionato
+            -   lista_ore_prenotate_utente = lista delle ore occupate dall'utente 
+            -   flag_allievo = True se allievo
+        restituisce:
+            -   partendo dalla lista delle ore del giorno selezionato quelle che in base al flag_allievo sono disponibili
+    '''
+    if flag_allievo:
         # ottengo la lista delle ore in cui un utente maestro ha prenotato un paglione
         prenotazioni_maestri = Prenotazione.objects.filter(
             utente__groups__name='Maestri')
@@ -113,7 +133,7 @@ def GiornoView(request, day):
         lista_ore_prenotabili = [
             x for x in lista_ore if x not in lista_ore_prenotate_utente]
 
-    return render(request, 'prenotazioni/giorno.html', {'lista_ore': lista_ore_prenotabili, 'day': selected_day})
+    return lista_ore_prenotabili
 
 
 def PrenotaView(request, hour):
@@ -123,15 +143,33 @@ def PrenotaView(request, hour):
     Controlli su:
         -   vietare all'utente di prenotare più campi alla stessa ora
         -   vista per utente non registrato
+        -   controllo accesso tramite url ad orari non possibili per il tipo di utente
     '''
     # ottengo l'ora in formato datetime
     selected_hour = datetime.strptime(hour, '%Y-%m-%d %H:%M:%S')
 
     if request.user.is_authenticated:
         # ottengo le prenotazioni dell'utente e gli vieto di prenotare più campi per la stessa ora
+        # e controlli se appartiene al gruppo limitato "Allievi"
         prenotazioni = Prenotazione.objects.filter(utente=request.user)
-        if selected_hour in [p.ora_prenotata.replace(tzinfo=None) for p in prenotazioni]:
-            return redirect('profile')
+        lista_ore_prenotate_utente = [
+            prenotazione.ora_prenotata.replace(tzinfo=None) for prenotazione in prenotazioni]
+        start_time = datetime.combine(selected_hour, datetime.min.time())
+        lista_ore = [start_time + timedelta(hours=x) for x in range(8, 23)]
+
+        # controllo se l'utente fa parte del gruppo "Allievi"
+        # questo flag sarà passato al template che permetterà all'allievo di prenotare solo campi liberi
+        flag_allievi = "Allievi" in [
+            group.name for group in request.user.groups.all()]
+        if flag_allievi:
+            if selected_hour not in _lista_ore_prenotabili(
+                    lista_ore, lista_ore_prenotate_utente, True):
+                return redirect('profile')
+
+        else:
+            if selected_hour not in _lista_ore_prenotabili(
+                    lista_ore, lista_ore_prenotate_utente, False):
+                return redirect('profile')
 
     # creo un dizionario che avrà i paglioni attivi e la lista di utenti prenotati in ordine di priorità
     paglioni_attivi = Paglione.objects.filter(attivo=True)
@@ -140,7 +178,7 @@ def PrenotaView(request, hour):
         prenotazioni = Prenotazione.objects.filter(
             ora_prenotata=selected_hour, paglione=paglione).order_by('priorità')
         prenotazioni_paglione[paglione] = prenotazioni
-    return render(request, 'prenotazioni/prenota_ora.html', {'prenotazioni_paglione': prenotazioni_paglione, 'hour': selected_hour})
+    return render(request, 'prenotazioni/prenota_ora.html', {'prenotazioni_paglione': prenotazioni_paglione, 'hour': selected_hour, 'flag_allievi': flag_allievi})
 
 
 @login_required

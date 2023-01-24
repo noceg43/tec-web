@@ -10,10 +10,17 @@
         {% else %}
             <p>Campo libero</p>
         {% endif %}
-    {% if user.is_authenticated %}
+    {% if user.is_authenticated and not flag_allievi %}
+        <form action="{% url 'crea' paglione.id hour|date:'Y-m-d H:i:s' %}" method="post">
+            {% csrf_token %}
+            <input type="submit" value="Prenota">
+        </form>    
+    {% endif %}
+    {% if flag_allievi and not prenotazioni %}
         <form action="{% url 'crea' paglione.id hour|date:'Y-m-d H:i:s' %}" method="post">
             {% csrf_token %}
             <input type="submit" value="Prenota">
         </form>
     {% endif %}
+
     {% endfor %}
