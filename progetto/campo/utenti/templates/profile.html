@@ -32,4 +32,16 @@
     {% else %}
         <p>Nessun paglione prenotato.</p>
     {% endif %}
+
+    <h1 id="app">{{ text }}</h1>
+    
 {% endblock %}
+<script>
+    var socket = new WebSocket('ws://localhost:8000/ws/some_url/');
+
+    socket.onmessage = function(event){
+        var data = JSON.parse(event.data);
+        console.log(data);
+        document.querySelector('#app').innerText = data.message;
+    }
+</script>

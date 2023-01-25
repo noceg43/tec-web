@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'channels',
     'amministratore',
     'bacheca',
     'messaggi',
@@ -75,7 +76,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'campo.wsgi.application'
 
-ASGI_APPLICATION = 'chat.asgi.application'
+ASGI_APPLICATION = 'campo.asgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
