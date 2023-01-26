@@ -132,3 +132,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # redireziona alla home, ma con un parametro GET
 # LOGIN_REDIRECT_URL = "/utenti/profile"  # redireziona alla home
+
+
+MEDIA_URL = "/media/"
+MEDIA_ROOT = os.path.join(BASE_DIR, "media/")

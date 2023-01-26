@@ -1,0 +1,13 @@
+<h1>Bacheca:</h1>
+<ul>
+  {% for post in object_list %}
+    <li>
+    <h3> {{post.ora_creazione }} </h3>  
+    <h2>{{ post.autore }} </h2>
+    <p> {{ post.messaggio }}</p>
+    {% if post.immagine %}
+    <img src="{{ post.immagine.url}}" width=auto height="250">
+    {% endif %}
+    </li>
+  {% endfor %}
+</ul>
