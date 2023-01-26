@@ -13,6 +13,8 @@ urlpatterns = [
     path('crea/<int:paglione_id>/<str:hour>', CreaView, name='crea'),
     path('cancella/<int:id_prenotazione>/',
          CancellaPrenotazione, name='cancella_prenotazione'),
+    path('segna_come_letto/<int:id_cancellazione>/',
+         SegnaComeLettoCancellazione, name='segna_come_letto'),
 ]
 # erase()
 init()

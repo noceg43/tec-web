@@ -1,7 +1,7 @@
 from django.db.models.signals import pre_delete
 from django.dispatch import receiver
 
-from prenotazioni.models import Prenotazione
+from prenotazioni.models import Cancellazione, Prenotazione
 
 
 @receiver(pre_delete, sender=Prenotazione)
@@ -15,4 +15,8 @@ def send_notification(sender, instance, **kwargs):
         if len(prossimi) > 1:
             message = str(prossimi[1].utente) + " ha ora accesso al paglione n." + str(
                 instance.paglione.id) + " alle ore " + str(instance.ora_prenotata)
-            print(message)
+            message = "Il paglione n." + str(
+                instance.paglione.id) + " che hai prenotato per l'ora " + str(instance.ora_prenotata) + " si è liberato !"
+            cancellazione = Cancellazione.objects.create(
+                messaggio=message, utente=prossimi[1].utente)
+            cancellazione.save()

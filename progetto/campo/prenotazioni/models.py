@@ -1,3 +1,4 @@
+from datetime import datetime
 from django.db import models
 from django.contrib.auth.models import User
 
@@ -30,3 +31,16 @@ class Prenotazione(models.Model):
 
     class Meta:
         verbose_name_plural = "Prenotazioni"
+
+
+class Cancellazione(models.Model):
+    utente = models.ForeignKey(User, on_delete=models.PROTECT, blank=True,
+                               null=True, default=None, related_name="cancellazioni")
+    ora_creazione = models.DateTimeField(default=datetime.now())
+    messaggio = models.TextField()
+
+    def __str__(self):
+        return self.messaggio
+
+    class Meta:
+        verbose_name_plural = "Cancellazioni"

@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from django.views.generic import ListView
 
 from prenotazioni.forms import PrenotazioneForm
-from .models import Paglione, Prenotazione
+from .models import Cancellazione, Paglione, Prenotazione
 from django.contrib.auth.decorators import login_required
 from datetime import datetime, timedelta
 from django.contrib.auth.models import Group
@@ -221,3 +221,16 @@ def CancellaPrenotazione(request, id_prenotazione):
         prenotazioni.delete()
     return redirect('profile')
 # se si era primi in priorità e c'è almeno un utente dopo,
+
+
+@login_required
+def SegnaComeLettoCancellazione(request, id_cancellazione):
+    '''
+    View per eliminare la Cancellazione cioè segnarla come visto
+    Controlli su:
+        -   se la Cancellazione da eliminare appartiene all'utente che accede la view
+    '''
+    cancellazione = Cancellazione.objects.get(id=id_cancellazione)
+    if request.user == cancellazione.utente:
+        cancellazione.delete()
+    return redirect('profile')

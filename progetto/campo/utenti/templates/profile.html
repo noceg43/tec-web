@@ -33,15 +33,34 @@
         <p>Nessun paglione prenotato.</p>
     {% endif %}
 
+    <h1>Notifiche:</h1>
+    {% if cancellazioni %}
+    <ul>
+        {% for cancellazione in cancellazioni %}
+            <li> {{ cancellazione.ora_creazione }} - <b> {{ cancellazione.messaggio }} </b> 
+                <form action="{% url 'segna_come_letto' cancellazione.id %}" method="post">
+                    {% csrf_token %}
+                    <input type="submit" value="Segna come letto">
+                </form>                
+            </li>
+        {% endfor %}
+    </ul>
+    {% else %}
+        <p>Nessuna notifica al momento</p>
+    {% endif %}
+
+
+
     <h1 id="app">{{ text }}</h1>
     
 {% endblock %}
-<script>
-    var socket = new WebSocket('ws://localhost:8000/ws/some_url/');
 
-    socket.onmessage = function(event){
-        var data = JSON.parse(event.data);
-        console.log(data);
-        document.querySelector('#app').innerText = data.message;
-    }
+<script>
+    //var socket = new WebSocket('ws://localhost:8000/ws/some_url/');
+
+    //socket.onmessage = function(event){
+    //    var data = JSON.parse(event.data);
+    //    console.log(data);
+    //    document.querySelector('#app').innerText = data.message;
+    //}
 </script>

@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.urls import reverse_lazy
 
-from prenotazioni.models import Prenotazione
+from prenotazioni.models import Cancellazione, Prenotazione
 from .forms import *
 from django.views.generic.edit import CreateView
 from django.contrib.auth.views import FormView
@@ -28,4 +28,7 @@ class ProfileView(LoginRequiredMixin, TemplateView):
         prenotazioni = Prenotazione.objects.filter(utente=self.request.user)
         context['prenotazioni'] = {
             prenotazione: prenotazione.primo_priorità() for prenotazione in prenotazioni}
+        cancellazioni = Cancellazione.objects.filter(
+            utente=self.request.user).order_by('ora_creazione')
+        context['cancellazioni'] = cancellazioni
         return context
