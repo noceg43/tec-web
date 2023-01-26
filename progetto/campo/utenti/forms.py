@@ -3,14 +3,10 @@ from django.contrib.auth.models import Group
 from django import forms
 
 
-class CreaUtenteLettore(UserCreationForm):
-    # Facciamo un override del metodo save per assicurarci di assegnare il gruppo specificato
-    # all'utente appena registrato. I gruppi possono essere creati in via programmatica, ma in questo
-    # caso li abbiamo creati dal pannello admin nell'interfaccia grafica web.
+class CreaUtenteAllievo(UserCreationForm):
+
     def save(self, commit=True):
-        user = super().save(commit)  # ottengo un riferimento all'utente
-        # cerco il gruppo che mi interessa
+        user = super().save(commit)
         g = Group.objects.get(name="Allievi")
-        g.user_set.add(user)  # aggiungo l'utente al gruppo
-        # restituisco quello che il metodo padre di questo metodo avrebbe restituito.
+        g.user_set.add(user)
         return user

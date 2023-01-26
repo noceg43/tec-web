@@ -14,7 +14,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 
 
 class UserCreateView(CreateView):
-    form_class = CreaUtenteLettore
+    form_class = CreaUtenteAllievo
     template_name = "create_user.html"
     success_url = reverse_lazy("login")
 
