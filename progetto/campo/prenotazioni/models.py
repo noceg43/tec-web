@@ -36,7 +36,7 @@ class Prenotazione(models.Model):
 class Cancellazione(models.Model):
     utente = models.ForeignKey(User, on_delete=models.PROTECT, blank=True,
                                null=True, default=None, related_name="cancellazioni")
-    ora_creazione = models.DateTimeField(default=datetime.now())
+    ora_creazione = models.DateTimeField()
     messaggio = models.TextField()
 
     def __str__(self):

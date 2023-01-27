@@ -1,0 +1,33 @@
+<table>
+    <thead>
+        <tr>
+            <th>Username</th>
+            <th>Appartiene:</th>
+            <th>Data di registrazione</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for user in users %}
+            <tr>
+                <td>{{ user.username }}</td>
+                <td>
+                    {% for group in user.groups.all %}
+                        {{ group.name }}
+                    {% endfor %}
+                </td>
+                <td>{{ user.date_joined|date:'d/m/Y' }}</td>
+                <td>
+                    <form action="{% url 'promuovi' user.id %}" method="post">
+                        {% csrf_token %}
+                        <button type="submit" name="promuovi">Promuovi</button>
+                    </form>
+                    <form action="{% url 'retrocedi' user.id %}" method="post">
+                        {% csrf_token %}
+                        <button type="submit" name="retrocedi">Retrocedi</button>
+                    </form>
+                </td>   
+
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>

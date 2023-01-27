@@ -1,3 +1,4 @@
+from datetime import datetime
 from django.db.models.signals import pre_delete
 from django.dispatch import receiver
 
@@ -18,5 +19,5 @@ def send_notification(sender, instance, **kwargs):
             message = "Il paglione n." + str(
                 instance.paglione.id) + " che hai prenotato per l'ora " + str(instance.ora_prenotata) + " si è liberato !"
             cancellazione = Cancellazione.objects.create(
-                messaggio=message, utente=prossimi[1].utente)
+                messaggio=message, utente=prossimi[1].utente, ora_creazione=datetime.now())
             cancellazione.save()
