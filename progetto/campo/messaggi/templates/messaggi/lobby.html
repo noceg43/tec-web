@@ -1,14 +1,12 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta charset='utf-8'>
-    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
-    <title>Lobby</title>
-    <meta name='viewport' content='width=device-width, initial-scale=1'>
+
+    <title>Servizio Clienti</title>
 
 </head>
 <body>
-    <h1>Lets chat!</h1>
+    <h1 id="room-name">Che domanda hai ?</h1>
 
     <form id="form">
         <input type="text" name="message"/>
@@ -16,15 +14,27 @@
 
     <div id="messages"></div>
 
-    <script type="text/javascript">
-        let url = `ws://${window.location.host}/ws/socket-server/`
+    <script type="text/javascript">     
+        // ottieni il nome della stanza dall'utente        
+        let roomName = window.prompt("Inserisci qui la tua domanda, risponderemo il prima possibile") 
+        // Imposta il nome della domanda come titolo
+        document.getElementById("room-name").innerHTML = roomName;
+
+        let url = `ws://${window.location.host}/ws/socket-server/${roomName}`        
 
         const chatSocket = new WebSocket(url)
 
+
+        // Intercetta errore 
+        chatSocket.onerror = function(e) {
+            let messages = document.getElementById('messages')
+            messages.insertAdjacentHTML('beforeend', '<div>⚠ Errore al momento lo staff è impegnato con una domanda simile, prova a riformularla in un altro modo ⚠</div>')
+        }
+
+        // Ascolta i messaggi in arrivo dal WebSocket
         chatSocket.onmessage = function(e){
             let data = JSON.parse(e.data)
             console.log('Data:', data)
-
             if(data.type === 'chat'){
                 let messages = document.getElementById('messages')
 
@@ -34,6 +44,7 @@
             }
         }
 
+        // Invia i messaggi al WebSocket quando il form viene inviato        
         let form = document.getElementById('form')
         form.addEventListener('submit', (e)=> {
             e.preventDefault()
