@@ -16,13 +16,8 @@
 
     <script type="text/javascript">     
         // ottieni il nome della stanza dall'utente        
-        let roomName = window.prompt("Inserisci qui l'oggetto della tua domanda, risponderemo il prima possibile") 
-        
-        while (roomName == "" || roomName.includes(" "))
-        {
-        alert("Inserisci una sola parola come oggetto");
-        roomName = window.prompt("Inserisci qui l'oggetto della tua domanda, risponderemo il prima possibile") 
-        }
+        let roomName = "{{ nome }}"
+
 
         // Imposta il nome della domanda come titolo
         document.getElementById("room-name").innerHTML = roomName;

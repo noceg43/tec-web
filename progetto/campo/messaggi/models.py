@@ -6,3 +6,6 @@ from django.db import models
 class Stanza(models.Model):
     nome = models.CharField(max_length=255)
     numero_utenti = models.IntegerField(default=0)
+
+    class Meta:
+        verbose_name_plural = "Stanze"

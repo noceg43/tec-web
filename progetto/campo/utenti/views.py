@@ -76,6 +76,7 @@ def PromuoviView(request, id_utente):
     return redirect('gestione')
 
 
+@user_passes_test(is_admin)
 def RetrocediView(request, id_utente):
     '''
         Accessibile solo se superuser, retrocede utente con la logica maestro->standard->allievi

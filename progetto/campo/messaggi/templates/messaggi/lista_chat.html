@@ -1,0 +1,20 @@
+<table>
+    <thead>
+        <tr>
+            <th>Domanda</th>
+            <th>N. utenti online:</th>
+
+        </tr>
+    </thead>
+    <tbody>
+        {% for stanza in stanze %}
+            <tr>
+                <td><a href="{% url 'chat_admin' stanza.nome %}">{{stanza.nome}}</a></td>
+
+                <td>{{ stanza.numero_utenti }}</td>
+
+
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
