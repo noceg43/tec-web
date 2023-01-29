@@ -1,5 +1,6 @@
 from django.contrib import admin
 from django.urls import include, path
+from messaggi.initcmds import cancella_stanze_scadute_start
 
 from messaggi.views import ListaChatView, StanzaView, lobby
 
@@ -11,3 +12,6 @@ urlpatterns = [
 
 
 ]
+
+
+# cancella_stanze_scadute_start()
