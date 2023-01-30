@@ -1,8 +1,10 @@
+from django.db.models.signals import post_save
 from datetime import datetime
 from django.db.models.signals import pre_delete
 from django.dispatch import receiver
+from django.contrib.auth.models import Group
 
-from prenotazioni.models import Cancellazione, Prenotazione
+from prenotazioni.models import Cancellazione, Paglione, Prenotazione
 
 
 @receiver(pre_delete, sender=Prenotazione)
@@ -21,3 +23,15 @@ def send_notification(sender, instance, **kwargs):
             cancellazione = Cancellazione.objects.create(
                 messaggio=message, utente=prossimi[1].utente, ora_creazione=datetime.now())
             cancellazione.save()
+
+
+@receiver(post_save, sender=Paglione)
+def elimina_prenotazioni_paglione_non_attivo(sender, instance, **kwargs):
+    if not instance.attivo:
+        prenotazioni = instance.prenotazioni.all()
+        for prenotazione in prenotazioni:
+            if prenotazione.utente.groups.filter(name='Maestri').exists():
+                prenotazioni_allievi = Prenotazione.objects.filter(
+                    ora_prenotata=prenotazione.ora_prenotata, utente__groups=Group.objects.get(name='Allievi'))
+                prenotazioni_allievi.delete()
+        prenotazioni.delete()

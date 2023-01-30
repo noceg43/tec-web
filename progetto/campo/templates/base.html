@@ -97,8 +97,11 @@
                 <li style="background-color: black; color: white; padding: 10px 20px; margin-right: 10px; border-radius: 10px;">
                     <a href="{% url 'gestione' %}" style="text-decoration: none; color: white;">👥Gestione utenti</a>
                 </li>                                
+                <li style="background-color: black; color: white; padding: 10px 20px; margin-right: 10px; border-radius: 10px;">
+                  <a href="http://127.0.0.1:8000/admin" style="text-decoration: none; color: white;">👩‍💻Pannello Django</a>
+                </li>                   
                 <li style="background-color: white; color: white; padding: 10px 20px; margin-right: 10px; border-radius: 10px;">
-                    <a href="{% url 'logout' %}" style="text-decoration: none; color: black;">❌Logout</a>
+                    <a href="{% url 'logout' %}" style="text-decoration: none; color: black;">❌Logout</a>                                                 
             {% else %}
                 <li style="background-color: black; color: white; padding: 10px 20px; margin-right: 10px; border-radius: 10px;">
                     <a href="{% url 'profile' %}" style="text-decoration: none; color: white;">👤{{ user.username }}</a>
