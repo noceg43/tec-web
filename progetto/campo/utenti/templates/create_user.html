@@ -1,18 +1,17 @@
-{% block title %} Creazione Utente {{ form.user_group_name }} {% endblock %} 
+{% extends 'base.html' %}
 
-{% block header1 %}
-  <h1>Pagina di Registrazione</h1>
-  <p>Si prega di compilare i campi necessari</p> 
-{% endblock %}
 
 {% block content %} 
+
+  <h1>Pagina di Registrazione</h1>
+  <p>Si prega di compilare i campi necessari</p> 
+
 
 <form method="post">
     {% csrf_token %}
     {{ form.as_p }}
-    <input type="submit" value="Register">
+    <input type="submit" value="Register" name="Registrati">
 </form>
 
 {% endblock %}
 
-{% block footer %} {% endblock %}

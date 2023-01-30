@@ -1,6 +1,6 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import user_passes_test
-
+from django.contrib.auth.mixins import AccessMixin
 from messaggi.models import Stanza
 from django.views.generic import TemplateView
 
@@ -23,8 +23,13 @@ def ListaChatView(request):
     return render(request, 'messaggi/lista_chat.html', {'stanze': stanze})
 
 
-class StanzaView(TemplateView):
+class StanzaView(TemplateView, AccessMixin):
     template_name = 'messaggi/chat_admin.html'
+
+    def dispatch(self, request, *args, **kwargs):
+        if not request.user.is_superuser:
+            return self.handle_no_permission()
+        return super().dispatch(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

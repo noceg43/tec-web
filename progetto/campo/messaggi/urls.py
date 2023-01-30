@@ -6,7 +6,7 @@ from messaggi.views import ListaChatView, StanzaView, lobby
 
 
 urlpatterns = [
-    path('', lobby),
+    path('', lobby, name='chat'),
     path('lista_chat/', ListaChatView, name='lista_chat'),
     path('stanza/<str:nome>/', StanzaView.as_view(), name='chat_admin'),
 

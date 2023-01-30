@@ -26,7 +26,7 @@ urlpatterns = [
     path("messaggi/", include("messaggi.urls")),
     path("prenotazioni/", include("prenotazioni.urls")),
     path("accounts/", include("utenti.urls")),
-    path('home/', home, name='home'),
+    path('', home, name='home'),
 
 
 ]

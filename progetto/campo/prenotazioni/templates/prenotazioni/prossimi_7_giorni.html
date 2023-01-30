@@ -1,6 +1,12 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
 <h1>Seleziona il giorno</h1>
 <ul>
   {% for day in prossimi_7_giorni %}
   <li><a href="{% url 'giorno' day %}">{{ day }}</a></li>
   {% endfor %}
 </ul>
+
+{% endblock %}

@@ -1,0 +1,149 @@
+<!-- base.html -->
+<!DOCTYPE html>
+<html>
+  <head>
+    <style>
+        body {
+            background-color: #f2f2f2;
+            font-family: Arial, sans-serif;
+          }
+          
+          .container {
+            max-width: 800px;
+            margin: 0 auto;
+            text-align: center;
+          }
+          
+          h1 {
+            color: #1c2331;
+            font-size: 36px;
+            margin-top: 50px;
+          }
+
+          input[type=submit] {
+            padding:10px 15px; 
+            background:#ccc; 
+            border:0 none;
+            cursor:pointer;
+            -webkit-border-radius: 5px;
+            border-radius: 5px; 
+            background-color: lightblue;
+
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 8px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background-color: #ddd;
+        }
+        
+          .target {
+            background-color: #ffd700;
+            border-radius: 50%;
+            height: 300px;
+            width: 300px;
+            display: inline-block;
+            margin: 50px;
+            position: relative;
+          }
+          
+          .arrow {
+            border-right: 20px solid #1c2331;
+            border-top: 20px solid transparent;
+            border-bottom: 20px solid transparent;
+            position: absolute;
+            right: -20px;
+            top: calc(50% - 10px);
+          }
+          
+          .score {
+            background-color: #1c2331;
+            color: #fff;
+            border-radius: 50%;
+            height: 50px;
+            width: 50px;
+            display: inline-block;
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            font-size: 24px;
+            line-height: 50px;
+          }
+          
+          .arrow-section {
+            margin-top: 50px;
+          }
+          
+          button {
+            background-color: #1c2331;
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-right: 10px;
+          }
+          
+          button:hover {
+            background-color: #fff;
+            color: #1c2331;
+          }
+              </style>
+  </head>
+  <body>
+
+    {% block menu %}
+      <nav>
+        <ul style="list-style: none; margin: 0; padding: 0; display: flex;">
+        <li style="background-color: gold; color: black; padding: 10px 20px; margin-right: 10px; border-radius: 10px;">
+            <a href="{% url 'home' %}" style="text-decoration: none; color: black;">🏠Home</a>
+            </li>            
+          <li style="background-color: red; color: black; padding: 10px 20px; margin-right: 10px; border-radius: 10px;">
+            <a href="{% url 'prossimi_7_giorni' %}" style="text-decoration: none; color: white;">🏹Prenota</a>
+          </li>
+          <li style="background-color: lightskyblue; color: white; padding: 10px 20px; margin-right: 10px; border-radius: 10px;">
+            <a href="{% url 'bacheca' %}" style="text-decoration: none; color: white;">📰Bacheca</a>
+          </li>
+          {% if user.is_authenticated %}
+            {% if user.is_superuser %}
+                <li style="background-color: black; color: white; padding: 10px 20px; margin-right: 10px; border-radius: 10px;">
+                    <a href="{% url 'profile' %}" style="text-decoration: none; color: white;">👤 AMMINISTRATORE</a>
+                </li>
+                <li style="background-color: black; color: white; padding: 10px 20px; margin-right: 10px; border-radius: 10px;">
+                    <a href="{% url 'lista_chat' %}" style="text-decoration: none; color: white;">⌨Lista chat</a>
+                </li>
+                <li style="background-color: black; color: white; padding: 10px 20px; margin-right: 10px; border-radius: 10px;">
+                    <a href="{% url 'gestione' %}" style="text-decoration: none; color: white;">👥Gestione utenti</a>
+                </li>                                
+                <li style="background-color: white; color: white; padding: 10px 20px; margin-right: 10px; border-radius: 10px;">
+                    <a href="{% url 'logout' %}" style="text-decoration: none; color: black;">❌Logout</a>
+            {% else %}
+                <li style="background-color: black; color: white; padding: 10px 20px; margin-right: 10px; border-radius: 10px;">
+                    <a href="{% url 'profile' %}" style="text-decoration: none; color: white;">👤{{ user.username }}</a>
+                </li>
+                <li style="background-color: white; color: white; padding: 10px 20px; margin-right: 10px; border-radius: 10px;">
+                    <a href="{% url 'logout' %}" style="text-decoration: none; color: black;">❌Logout</a>
+                </li>
+            {% endif %}
+          {% else %}
+            <li style="background-color: black; color: white; padding: 10px 20px; margin-right: 10px; border-radius: 10px;">
+                <a href="{% url 'profile' %}" style="text-decoration: none; color: white;">👤Il tuo profilo</a>
+            </li>
+          {% endif %}
+        </ul>
+      </nav>      
+    {% endblock %}    
+
+
+    {% block content %}
+
+    {% endblock %}
+  </body>
+</html>

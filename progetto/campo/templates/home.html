@@ -1,5 +1,12 @@
-<h1> sei autenticato ? </h1>
+{% extends 'base.html' %}
 
-{% if user.is_authenticated %}
-<h2> autenticato Ciao {{ user}}</h2>
-{% endif%}
+
+
+{% block content %}
+<h1>Benvenuto nel sito di prenotazione e gestione del campo di 🎯tiro con l'arco!🎯</h1>
+<p>Siamo felici che tu sia qui.</p>
+<p>Se hai già un account effettua il <a href="{% url 'login' %}">login</a></p>
+<p>oppure <a href="{% url 'register' %}">registrati</a> per avere accesso a tutte le funzioni.</p>
+<h3> Servizio clienti: </h3>
+<p>Se sei qua solo per chiedere informazioni puoi contattarci tramite questa chat <a href="{% url 'chat' %}">contattaci</a> in forma anonima.</p>
+{% endblock %}

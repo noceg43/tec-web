@@ -170,6 +170,8 @@ def PrenotaView(request, hour):
             if selected_hour not in _lista_ore_prenotabili(
                     lista_ore, lista_ore_prenotate_utente, False):
                 return redirect('profile')
+    else:
+        flag_allievi = False
 
     # creo un dizionario che avrà i paglioni attivi e la lista di utenti prenotati in ordine di priorità
     paglioni_attivi = Paglione.objects.filter(attivo=True)

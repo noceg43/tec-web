@@ -1,3 +1,8 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+
 <h1>prenotazioni per {{ hour|date:"H:i" }}</h1>
 {% for paglione, prenotazioni in prenotazioni_paglione.items %}
     <h2>Paglione {{ paglione }}</h2>
@@ -24,3 +29,6 @@
     {% endif %}
 
     {% endfor %}
+
+
+    {% endblock %}
