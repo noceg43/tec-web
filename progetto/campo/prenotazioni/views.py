@@ -16,42 +16,6 @@ class PaglioneListView(ListView):
     context_object_name = 'paglioni'
 
 
-@login_required
-def PrenotazioneView(request, day):
-    '''
-    da cancellare sostituita dalle view sotto
-    '''
-    oggi = datetime.now().date()
-    prossimi_7_giorni = [oggi + timedelta(days=i) for i in range(1, 8)]
-    # controllo se data formattata correttamente
-    try:
-        selected_day = datetime.strptime(day, '%Y-%m-%d').date()
-    except ValueError:
-        selected_day = None
-    # se si prova ad accedere a giorni non nella lista restituisce il settimo giorno
-    if selected_day not in prossimi_7_giorni:
-        selected_day = prossimi_7_giorni[-1]
-
-    # ottengo la lista delle ore in cui l'utente occuperà il campo
-    prenotazioni = Prenotazione.objects.filter(utente=request.user)
-    lista = [prenotazione.ora_prenotata for prenotazione in prenotazioni]
-
-    if request.method == 'POST':
-        form = PrenotazioneForm(request.POST, lista_prenotazioni=lista)
-        if form.is_valid():
-            prenotazione = form.save(commit=False)
-            prenotazione.utente = request.user
-            prenotazione.priorità = datetime.now()
-            prenotazione.save()
-            return redirect('profile')
-    else:
-        # la passo al form che restituirà all'utente un form senza
-        # orari già prenotati da esso
-        form = PrenotazioneForm(lista_prenotazioni=lista)
-
-    return render(request, 'prenotazioni/crea_prenotazione.html', {'form': form, 'day': selected_day})
-
-
 def Prossimi7GiorniView(request):
     '''
     Semplice lista di link agli orari disponibili dei prossimi 7 giorni 
@@ -65,7 +29,7 @@ def GiornoView(request, day):
     '''
     Selezione dell'ora per la quale si vuole prenotare
     controlli su: 
-        -   vietare accesso alla pagina di giorni > 7imo
+        -   vietare accesso alla pagina di giorni non presenti nella lista
         -   mostrare all'utente solo ore dove lui non è già occupato
         -   vista per utente non registrato
         -   restituire lista di ore in base al tipo di utente che le richiede
