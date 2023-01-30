@@ -29,56 +29,31 @@
             border-radius: 5px; 
             background-color: lightblue;
 
-        }
+          }
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        th, td {
+          table {
+              width: 100%;
+              border-collapse: collapse;
+          }
+          th, td {
+              padding: 8px;
+              text-align: left;
+              border-bottom: 1px solid #ddd;
+          }
+          th {
+              background-color: #ddd;
+          }
+          
+          .post {
+            background-color: #D6E7F1;
+            border: 2px solid black;
+            border-radius: 5%;
+            height: auto;
             padding: 8px;
-            text-align: left;
-            border-bottom: 1px solid #ddd;
-        }
-        th {
-            background-color: #ddd;
-        }
-        
-          .target {
-            background-color: #ffd700;
-            border-radius: 50%;
-            height: 300px;
-            width: 300px;
+            width: auto;
             display: inline-block;
             margin: 50px;
             position: relative;
-          }
-          
-          .arrow {
-            border-right: 20px solid #1c2331;
-            border-top: 20px solid transparent;
-            border-bottom: 20px solid transparent;
-            position: absolute;
-            right: -20px;
-            top: calc(50% - 10px);
-          }
-          
-          .score {
-            background-color: #1c2331;
-            color: #fff;
-            border-radius: 50%;
-            height: 50px;
-            width: 50px;
-            display: inline-block;
-            position: absolute;
-            top: 10px;
-            left: 10px;
-            font-size: 24px;
-            line-height: 50px;
-          }
-          
-          .arrow-section {
-            margin-top: 50px;
           }
           
           button {
@@ -134,7 +109,7 @@
             {% endif %}
           {% else %}
             <li style="background-color: black; color: white; padding: 10px 20px; margin-right: 10px; border-radius: 10px;">
-                <a href="{% url 'profile' %}" style="text-decoration: none; color: white;">👤Il tuo profilo</a>
+                <a href="{% url 'profile' %}" style="text-decoration: none; color: white;">👤Login</a>
             </li>
           {% endif %}
         </ul>
