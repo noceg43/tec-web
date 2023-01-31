@@ -1,8 +1,8 @@
-from datetime import datetime
-from django.test import TestCase
+from datetime import datetime, timedelta
+from django.test import TestCase, Client
 from django.contrib.auth.models import User, Group
 from .models import Paglione, Prenotazione
-from django.core import reverse
+from django.urls import reverse
 
 
 class TestEliminaPrenotazioniPaglioneNonAttivo(TestCase):
@@ -113,9 +113,7 @@ class TestEliminaPrenotazioniPaglioneNonAttivo(TestCase):
 
 class GiornoViewTestCase(TestCase):
     def setUp(self):
-        self.anno = datetime.now().date().year
-        self.mese = datetime.now().date().month
-        self.giorno = datetime.now().date().day
+        self.domani = datetime.now() + timedelta(days=1)
 
         # crea utenti e gruppi per il il test
         self.allievi = Group.objects.create(name='Allievi')
@@ -137,22 +135,60 @@ class GiornoViewTestCase(TestCase):
         # crea paglioni e prenotazioni per il test
         self.paglione = Paglione.objects.create(attivo=True)
         self.altro_paglione = Paglione.objects.create(attivo=True)
-        self.prenotazione_standard = Prenotazione.objects.create(
+        Prenotazione.objects.create(
             priorità='2023-01-01 12:00:00',
-            ora_prenotata=str(self.anno) + '-' + str(self.mese) +
-            '-' + str(self.giorno) + ' 12:00:00',
+            ora_prenotata=self.domani.strftime('%Y-%m-%d') + ' 13:00:00',
             paglione=self.paglione,
             utente=self.utente_standard
         )
+        self.client = Client()
 
-    def test_index_view_with_no_questions(self):
-        """
-        No questions --> "No polls are available" 
-        message should be displayed.
-        """
-
-        response = self.client.get(reverse('polls:index'))
+    def test_pagina_stringa_non_data(self):
+        stringa_test = 'non sono una data'
+        response = self.client.get(
+            reverse('giorno', kwargs={'day': stringa_test}))
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, "No polls are available.")
-        self.assertQuerysetEqual(
-            response.context['latest_question_list'], [])
+        self.assertContains(
+            response, (datetime.now() + timedelta(days=7)).strftime('%b.%e, %Y'))
+        self.assertContains(response, "13:00")
+
+    def test_pagina_non_autenticata(self):
+        response = self.client.get(
+            reverse('giorno', kwargs={'day': self.domani.strftime('%Y-%m-%d')}))
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(
+            response, self.domani.strftime('%b.%e, %Y'))
+        self.assertContains(response, "13:00")
+
+    def test_pagina_autenticata_allievo(self):
+        self.client.force_login(self.allievo)
+        response = self.client.get(
+            reverse('giorno', kwargs={'day': self.domani.strftime('%Y-%m-%d')}))
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(
+            response, self.domani.strftime('%b.%e, %Y'))
+        self.assertNotContains(response, "13:00")
+        self.client.logout()
+
+    def test_pagina_autenticata_standard(self):
+        self.client.force_login(self.utente_standard)
+        response = self.client.get(
+            reverse('giorno', kwargs={'day': self.domani.strftime('%Y-%m-%d')}))
+        print(Prenotazione.objects.all())
+        print(response.content)
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(
+            response, self.domani.strftime('%b.%e, %Y'))
+        self.assertNotContains(response, "13:00")
+        self.assertContains(response, "12:00")
+        self.client.logout()
+
+    def test_pagina_autenticata_maestro(self):
+        self.client.force_login(self.maestro)
+        response = self.client.get(
+            reverse('giorno', kwargs={'day': self.domani.strftime('%Y-%m-%d')}))
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(
+            response, self.domani.strftime('%b.%e, %Y'))
+        self.assertContains(response, "13:00")
+        self.client.logout()
