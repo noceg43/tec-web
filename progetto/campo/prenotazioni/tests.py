@@ -135,7 +135,7 @@ class GiornoViewTestCase(TestCase):
         # crea paglioni e prenotazioni per il test
         self.paglione = Paglione.objects.create(attivo=True)
         self.altro_paglione = Paglione.objects.create(attivo=True)
-        Prenotazione.objects.create(
+        self.prenotazione_standard = Prenotazione.objects.create(
             priorità='2023-01-01 12:00:00',
             ora_prenotata=self.domani.strftime('%Y-%m-%d') + ' 13:00:00',
             paglione=self.paglione,
@@ -174,8 +174,6 @@ class GiornoViewTestCase(TestCase):
         self.client.force_login(self.utente_standard)
         response = self.client.get(
             reverse('giorno', kwargs={'day': self.domani.strftime('%Y-%m-%d')}))
-        print(Prenotazione.objects.all())
-        print(response.content)
         self.assertEqual(response.status_code, 200)
         self.assertContains(
             response, self.domani.strftime('%b.%e, %Y'))
@@ -191,4 +189,34 @@ class GiornoViewTestCase(TestCase):
         self.assertContains(
             response, self.domani.strftime('%b.%e, %Y'))
         self.assertContains(response, "13:00")
+        self.client.logout()
+
+    def test_pagina_autenticata_standard_eliminazione_prenotazione(self):
+        self.prenotazione_standard.delete()
+        self.client.force_login(self.utente_standard)
+        response = self.client.get(
+            reverse('giorno', kwargs={'day': self.domani.strftime('%Y-%m-%d')}))
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, self.domani.strftime('%b.%e, %Y'))
+        self.assertContains(response, "13:00")
+        self.client.logout()
+
+    def test_pagina_autenticata_allievo_con_prenotazione_disponibile(self):
+        self.prenotazione_maestro = Prenotazione.objects.create(
+            priorità='2023-01-01 12:00:00',
+            ora_prenotata=self.domani.strftime('%Y-%m-%d') + ' 20:00:00',
+            paglione=self.paglione,
+            utente=self.maestro
+        )
+        self.client.force_login(self.allievo)
+        response = self.client.get(
+            reverse('giorno', kwargs={'day': self.domani.strftime('%Y-%m-%d')}))
+        print(response.content)
+        print(Prenotazione.objects.all())
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(
+            response, self.domani.strftime('%b.%e, %Y'))
+        self.assertNotContains(response, "13:00")
+        self.assertContains(response, "20:00")
+
         self.client.logout()
