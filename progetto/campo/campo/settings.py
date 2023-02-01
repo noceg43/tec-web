@@ -39,7 +39,6 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'channels',
-    'amministratore',
     'bacheca',
     'messaggi',
     'prenotazioni',

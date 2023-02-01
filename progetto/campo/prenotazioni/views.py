@@ -1,7 +1,6 @@
 from django.shortcuts import render, redirect
 from django.views.generic import ListView
 
-from prenotazioni.forms import PrenotazioneForm
 from .models import Cancellazione, Paglione, Prenotazione
 from django.contrib.auth.decorators import login_required
 from datetime import datetime, timedelta
