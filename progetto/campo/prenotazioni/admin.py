@@ -50,5 +50,5 @@ class CancellazioniAdmin(admin.ModelAdmin):
 
 
 admin.site.register(Paglione, PaglioneAdmin)
-admin.site.register(Prenotazione, PrenotazioniAdmin)
+admin.site.register(Prenotazione)
 admin.site.register(Cancellazione, CancellazioniAdmin)

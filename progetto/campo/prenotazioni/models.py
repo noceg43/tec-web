@@ -20,8 +20,8 @@ class Prenotazione(models.Model):
     ora_prenotata = models.DateTimeField()
     paglione = models.ForeignKey(
         Paglione, on_delete=models.CASCADE, related_name='prenotazioni')
-    utente = models.ForeignKey(User, on_delete=models.PROTECT, blank=True,
-                               null=True, default=None, related_name="prenotazioni")
+    utente = models.ForeignKey(
+        User, on_delete=models.PROTECT, related_name="prenotazioni")
 
     def primo_priorità(self):
         return Prenotazione.objects.filter(ora_prenotata=self.ora_prenotata, paglione=self.paglione).order_by('priorità').first() == self
@@ -31,6 +31,11 @@ class Prenotazione(models.Model):
 
     class Meta:
         verbose_name_plural = "Prenotazioni"
+        constraints = [
+            models.UniqueConstraint(
+                fields=['ora_prenotata', 'utente'], name='unique_migration_host_combination'
+            )
+        ]
 
 
 class Cancellazione(models.Model):
