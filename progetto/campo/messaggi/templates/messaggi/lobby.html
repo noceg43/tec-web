@@ -23,7 +23,7 @@
         // ottieni il nome della stanza dall'utente        
         let roomName = window.prompt("Inserisci qui l'oggetto della tua domanda, risponderemo il prima possibile") 
         
-        while (roomName == "" || roomName.includes(" "))
+        while (roomName == "" || roomName.includes(" ") || !/^[a-zA-Z]+$/.test(roomName))
         {
         alert("Inserisci una sola parola come oggetto");
         roomName = window.prompt("Inserisci qui l'oggetto della tua domanda, risponderemo il prima possibile") 

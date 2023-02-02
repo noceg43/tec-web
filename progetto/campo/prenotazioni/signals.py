@@ -29,6 +29,7 @@ def send_notification(sender, instance, **kwargs):
 def elimina_prenotazioni_paglione_non_attivo(sender, instance, **kwargs):
     if not instance.attivo:
         prenotazioni = instance.prenotazioni.all()
+        # check per eliminare possibili prenotazioni di allievi collegate a quelle di maestri che si stanno ora cancellando
         for prenotazione in prenotazioni:
             if prenotazione.utente.groups.filter(name='Maestri').exists():
                 prenotazioni_allievi = Prenotazione.objects.filter(

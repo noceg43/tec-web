@@ -21,7 +21,6 @@ class PrenotazioniAdmin(admin.ModelAdmin):
     list_filter = ('ora_prenotata', 'paglione')
     search_fields = ('utente__username', 'paglione__id')
     ordering = ('-ora_prenotata',)
-    actions = None
 
     def has_add_permission(self, request):
         return False
@@ -50,5 +49,5 @@ class CancellazioniAdmin(admin.ModelAdmin):
 
 
 admin.site.register(Paglione, PaglioneAdmin)
-admin.site.register(Prenotazione)
+admin.site.register(Prenotazione, PrenotazioniAdmin)
 admin.site.register(Cancellazione, CancellazioniAdmin)

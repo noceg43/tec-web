@@ -18,14 +18,23 @@ def is_admin(user):
 @user_passes_test(is_admin)
 def ListaChatView(request):
     '''
+        listView di tutte le istanze di Stanza, con link per entrarci
+        Controlli su:
+            -   garantire accesso solo ad amministratore
     '''
     stanze = Stanza.objects.all()
     return render(request, 'messaggi/lista_chat.html', {'stanze': stanze})
 
 
 class StanzaView(TemplateView, AccessMixin):
+    '''
+        CBView che restituisce la stanza chiamata con la variabile di contesto 'nome'
+        Controlli su:
+            -   garantire accesso solo ad amministratore
+    '''
     template_name = 'messaggi/chat_admin.html'
 
+    # check per le CBV di garantire accesso solo all'amministratore
     def dispatch(self, request, *args, **kwargs):
         if not request.user.is_superuser:
             return self.handle_no_permission()
