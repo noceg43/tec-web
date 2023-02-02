@@ -6,9 +6,6 @@ from django.urls import reverse
 
 
 class TestEliminaPrenotazioniPaglioneNonAttivo(TestCase):
-    '''
-
-    '''
 
     def setUp(self):
         # crea utenti e gruppi per il il test
@@ -144,76 +141,93 @@ class GiornoViewTestCase(TestCase):
         self.client = Client()
 
     def test_pagina_stringa_non_data(self):
+        # dato in input non una data, verificare che restituisca il settimo giorno
         stringa_test = 'non sono una data'
         response = self.client.get(
             reverse('giorno', kwargs={'day': stringa_test}))
         self.assertEqual(response.status_code, 200)
+        # titolo della pagina sia il settimo giorno
         self.assertContains(
             response, (datetime.now() + timedelta(days=7)).strftime('%b.%e, %Y'))
+        # pagina contenga le ore
         self.assertContains(response, "13:00")
 
     def test_pagina_non_autenticata(self):
+        # input una data coretta (domani)
         response = self.client.get(
             reverse('giorno', kwargs={'day': self.domani.strftime('%Y-%m-%d')}))
         self.assertEqual(response.status_code, 200)
+        # restituisca la pagina della data associata
         self.assertContains(
             response, self.domani.strftime('%b.%e, %Y'))
         self.assertContains(response, "13:00")
 
     def test_pagina_autenticata_allievo(self):
+        # login di utente allievo per data corretta (domani)
         self.client.force_login(self.allievo)
         response = self.client.get(
             reverse('giorno', kwargs={'day': self.domani.strftime('%Y-%m-%d')}))
         self.assertEqual(response.status_code, 200)
+        # verifica pagina della data associata e che non contenga ore
         self.assertContains(
             response, self.domani.strftime('%b.%e, %Y'))
         self.assertNotContains(response, "13:00")
         self.client.logout()
 
     def test_pagina_autenticata_standard(self):
+        # login di utente standard per data corretta (domani)
         self.client.force_login(self.utente_standard)
         response = self.client.get(
             reverse('giorno', kwargs={'day': self.domani.strftime('%Y-%m-%d')}))
         self.assertEqual(response.status_code, 200)
+        # verifica pagina associata non contenga un'ora in cui l'utente è già occupato
         self.assertContains(
             response, self.domani.strftime('%b.%e, %Y'))
         self.assertNotContains(response, "13:00")
+        # verifica che contenga un'ora in cui è libero
         self.assertContains(response, "12:00")
         self.client.logout()
 
     def test_pagina_autenticata_maestro(self):
+        # login di utente maestro per data corretta (domani)
         self.client.force_login(self.maestro)
         response = self.client.get(
             reverse('giorno', kwargs={'day': self.domani.strftime('%Y-%m-%d')}))
         self.assertEqual(response.status_code, 200)
+        # verifica pagina associata contenga ora in cui può prenotare
         self.assertContains(
             response, self.domani.strftime('%b.%e, %Y'))
         self.assertContains(response, "13:00")
         self.client.logout()
 
     def test_pagina_autenticata_standard_eliminazione_prenotazione(self):
+        # eliminazione prenotazione di utente standard
         self.prenotazione_standard.delete()
         self.client.force_login(self.utente_standard)
         response = self.client.get(
             reverse('giorno', kwargs={'day': self.domani.strftime('%Y-%m-%d')}))
         self.assertEqual(response.status_code, 200)
+        # verifica che ora sia disponibile prenotare per l'ora in cui è libero
         self.assertContains(response, self.domani.strftime('%b.%e, %Y'))
         self.assertContains(response, "13:00")
         self.client.logout()
 
     def test_pagina_autenticata_allievo_con_prenotazione_disponibile(self):
+        # creazione prenotazione di un maestro
         self.prenotazione_maestro = Prenotazione.objects.create(
             priorità='2023-01-01 12:00:00',
             ora_prenotata=self.domani.strftime('%Y-%m-%d') + ' 20:00:00',
             paglione=self.paglione,
             utente=self.maestro
         )
+        # login di utente tipo allievo
         self.client.force_login(self.allievo)
         response = self.client.get(
             reverse('giorno', kwargs={'day': self.domani.strftime('%Y-%m-%d')}))
-        print(response.content)
-        print(Prenotazione.objects.all())
+        # print(response.content)
+        # print(Prenotazione.objects.all())
         self.assertEqual(response.status_code, 200)
+        # verificare la possibilità dell'allievo di prenotare per l'ora insieme al maestro
         self.assertContains(
             response, self.domani.strftime('%b.%e, %Y'))
         self.assertNotContains(response, "13:00")
