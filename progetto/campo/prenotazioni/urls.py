@@ -18,4 +18,8 @@ urlpatterns = [
 # erase()
 init()
 
+'''
+########################################################
+FUNZIONE PERIODICA DI CANCELLAZIONE PRENOTAZIONI SCADUTE
+'''
 # cancella_prenotazioni_scadute_start()

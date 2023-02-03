@@ -13,5 +13,8 @@ urlpatterns = [
 
 ]
 
-
+'''
+################################################
+FUNZIONE PERIODICA DI CANCELLAZIONE STANZE VUOTE
+'''
 # cancella_stanze_scadute_start()
